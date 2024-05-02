@@ -17,7 +17,7 @@ const CONTAINER = styled.footer`
 
     .about-us, .policies, .newsletter, .follow-us{
         /* border: 2px solid black; */
-        min-width: 20%; 
+        min-width: 20%;
         h3{
         border-bottom: 3px solid ${({theme})=>theme.colors.primary};
         width: fit-content;
@@ -29,6 +29,7 @@ const CONTAINER = styled.footer`
     }
 
     .newsletter input[type='text']{
+        max-width: 300px;
         margin-top: 5px;
         padding : 5px
     }
@@ -40,6 +41,7 @@ const CONTAINER = styled.footer`
     .newsletter button{
         padding: 6px 6px;
         margin-left: 5px;
+        margin-top: 5px;
         background-color: ${({theme})=>theme.colors.secondary};   
         color: ${({theme})=>theme.colors.primary};
         border: none;
@@ -83,7 +85,18 @@ const CONTAINER = styled.footer`
      
     }
 
-
+    @media (max-width: ${({ theme }) => theme.media.mobile}){
+        .about-us, .policies, .newsletter, .follow-us{
+        /* border: 2px solid black; */
+        min-width: 100%;
+    }
+        h3{
+            font-size: 16px;
+        }
+        p{
+            font-size: 14px;
+        }
+    }
 
 ` 
 

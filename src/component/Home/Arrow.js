@@ -7,7 +7,7 @@ const arrowStyle= {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
     height: '50px', 
     width: '50px',
-
+    
 }
 
 export function NextArrow(props) {
@@ -15,7 +15,7 @@ export function NextArrow(props) {
     return (
       <div
         className={className}
-        style={{ ...style, ...arrowStyle}}
+        style={{ ...style, ...arrowStyle, right: '-1%', top: '50%'}}
         onClick={onClick}
       />
     );
@@ -27,7 +27,7 @@ export function PrevArrow(props) {
     return (
       <div
         className={className}
-        style={{ ...style, ...arrowStyle}}
+        style={{ ...style, ...arrowStyle, left: '-1%', top: '50%', zIndex: '1'}}
         onClick={onClick}
       />
     );

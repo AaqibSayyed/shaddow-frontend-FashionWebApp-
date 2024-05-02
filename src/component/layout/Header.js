@@ -4,6 +4,7 @@ import gsap from "gsap";
 import styled from "styled-components";
 import closeIcon from "../../assests/close.png";
 import avatar from "../../assests/avatar.png";
+import { NavLink } from "react-router-dom";
 
 const Wrapper = styled.header`
   /* border: 2px solid black; */
@@ -26,6 +27,26 @@ const Wrapper = styled.header`
     width: 53%;
     text-align: center;
   }
+
+  @media (max-width: ${({theme}) => theme.media.tab}) {
+    .policy-display{
+      font-size: 15px;
+    }
+    .arrows{
+      font-size: 23px;
+    }
+  }
+
+  @media (max-width: ${({theme}) => theme.media.mobile}) {
+    .policy-display{
+      font-size: 12px;
+    }
+    .arrows{
+      font-size: 15px;
+    }
+  }
+
+
 `;
 
 const HAMBURGER = styled.div`
@@ -53,10 +74,12 @@ const HAMBURGER = styled.div`
   .menu {
     padding: 20px 5px;
     border-bottom: 0.1px solid black;
+    overflow: hidden;
     &:hover {
       background-color: ${({ theme }) => theme.colors.secondary};
       color: ${({ theme }) => theme.colors.primary};
       border-radius: 5px;
+      overflow: hidden;
     }
   }
 
@@ -72,6 +95,44 @@ const HAMBURGER = styled.div`
     gap: 15px;
     border-top: 0.1px solid black;
   }
+
+  .navlink {
+    text-decoration: none;
+    color: inherit; 
+  }
+
+  .active {
+    text-decoration: underline;
+    color: black; 
+  }
+
+
+  @media (max-width: ${({theme}) => theme.media.tab}) {
+    img {
+    height: 19px;
+    width: 19px;
+  }
+  .menu{
+    font-size: 15px;
+  }
+
+  }
+
+  @media (max-width: ${({theme}) => theme.media.mobile}) {
+    img {
+    height: 13px;
+    width: 13px;
+  }
+  .menu{
+    font-size: 12px;
+  }
+  .account h4{
+    font-size: 14px;
+  }
+
+  }
+
+
 `;
 const Header = () => {
   const newPolicy = [
@@ -125,17 +186,29 @@ const Header = () => {
     close_menu.style.transform = "translateX(-100%)";
   }, []);
 
+
+
+
   return (
     <>
       <HAMBURGER className="hamburgerOpen">
         <img src={closeIcon} alt="close menu" onClick={closeMenu} />
 
-        <h4 className="menu">HOME</h4>
-        <h4 className="menu">PRODUCTS</h4>
-        <h4 className="menu">MEN</h4>
-        <h4 className="menu">WOMEN</h4>
-        <h4 className="menu">ABOUT</h4>
-        <h4 className="menu">GET IN TOUCH</h4>
+        <NavLink to="/" className="navlink">
+            <h4 className="menu">HOME</h4>
+          </NavLink>
+          <NavLink to="/products" className="navlink">
+            <h4 className="menu">MEN</h4>
+          </NavLink>
+          <NavLink to="/women" className="navlink">
+            <h4 className="menu">WOMEN</h4>
+          </NavLink>
+          <NavLink to="/about" className="navlink">
+            <h4 className="menu">ABOUT</h4>
+          </NavLink>
+          <NavLink to="/touch" className="navlink">
+            <h4 className="menu">GET IN TOUCH</h4>
+          </NavLink>
 
         <div className="account">
           <img src={avatar} alt="avatar" />

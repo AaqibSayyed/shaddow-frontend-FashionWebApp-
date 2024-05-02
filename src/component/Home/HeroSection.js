@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import heroSection1 from '../../assests/hero_section1.webp'
 import heroSection2 from '../../assests/hero_section2.webp'
 import heroSection3 from '../../assests/hero_section3.webp'
+import heroSection1Mobile from '../../assests/hero_section1_mobile.webp'
+import heroSection2Mobile from '../../assests/hero_section2_mobile.webp'
+import heroSection3Mobile from '../../assests/hero_section3_mobile.webp'
 
 
 const Hero = styled.section`
@@ -26,6 +29,16 @@ const Hero = styled.section`
     background-size: cover;
   }
 
+  .mobile-slide{
+    min-width: 100%;
+    object-fit: cover;
+    object-position: center;
+    min-height:80vh;
+    display:none;
+
+  }
+
+
   .slider-tiles{
     /* border: 2px solid palegoldenrod; */
     position: absolute;
@@ -42,6 +55,7 @@ const Hero = styled.section`
       width: 70px;
       background-color: gray;
       cursor: pointer;
+      transition: width 5s ease-in;
     }
     #active{
       height: 100%;
@@ -60,6 +74,23 @@ const Hero = styled.section`
       width: 100%;
     }
   } 
+
+  @media (max-width: ${({ theme }) => theme.media.mobile}){
+    
+    .slide{
+     display:none;
+    }
+    .mobile-slide{
+      display: block;
+    }
+
+    .slider-tiles{
+    .tiles{
+      width: 30px;
+      transition: all 5s ease-in;
+    }
+    }
+  }
 
 `;
 
@@ -92,9 +123,13 @@ function HeroSection({setShowNavbar, showNavbar}) {
       <Navbar showNavbar={showNavbar}/>
 
       <div className='slider-container' style={{ transform: `translateX(${-currentIndex * 100}%)` }}>
-        {images.map((src, index) => (
-          <img key={index} src={src} alt={`Hero-Slider ${index + 1}`} className='slide' />
-        ))}
+          <img src={heroSection1} alt={`Hero-Slider1`} className='slide' />
+          <img src={heroSection2} alt={`Hero-Slider2`} className='slide' />
+          <img src={heroSection3} alt={`Hero-Slider3`} className='slide' />
+
+          <img src={heroSection1Mobile} alt={`heroSection1Mobile`} className='mobile-slide' />
+          <img src={heroSection2Mobile} alt={`heroSection2Mobile`} className='mobile-slide' />
+          <img src={heroSection3Mobile} alt={`heroSection3Mobile`} className='mobile-slide' />
 
       </div>
         
