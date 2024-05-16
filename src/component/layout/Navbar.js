@@ -367,13 +367,10 @@ function Navbar(props) {
     }
   };
 
-  const focusInputSearch = () => {
-    searchFocus.current.focus();
-  };
 
   return (
     <>
-      <CONTAINER showNavbar={props.showNavbar} onClick={focusInputSearch}>
+      <CONTAINER showNavbar={props.showNavbar}>
         <Wrapper className="wrapper" showNavbar={props.showNavbar}>
           <div className="search">
             <img
@@ -407,7 +404,7 @@ function Navbar(props) {
 
           <div className="icons">
             <img src={mailIcon} alt="Search Icon" id="mailIcon" />
-            <img src={avatar} alt="Search Icon" id="avatar" />
+            <NavLink to='login'><img src={avatar} alt="Search Icon" id="avatar" /></NavLink>
             <img src={shoppingCart} alt="Search Icon" id="shoppingCart" />
           </div>
         </Wrapper>

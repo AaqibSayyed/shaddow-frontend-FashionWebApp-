@@ -48,7 +48,7 @@ const CustomerReviews = styled.div`
     box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.5);
     min-width: 30%;
     padding: 5px;
-    border-radius: 5px
+    border-radius: 5px;
   }
 
   .userDetails {

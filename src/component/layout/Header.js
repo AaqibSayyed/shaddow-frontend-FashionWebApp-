@@ -84,7 +84,7 @@ const HAMBURGER = styled.div`
     /* border:2px solid olive; */
     display: flex;
     padding: 10px 0;
-    gap: 15px;
+    gap: 13px;
     border-top: 0.1px solid black;
   }
 
@@ -102,8 +102,8 @@ const HAMBURGER = styled.div`
 
   @media (max-width: ${({theme}) => theme.media.tab}) {
     img {
-    height: 19px;
-    width: 19px;
+    height: 17px;
+    width: 17px;
   }
   .menu{
     font-size: 15px;
@@ -113,14 +113,14 @@ const HAMBURGER = styled.div`
 
   @media (max-width: ${({theme}) => theme.media.mobile}) {
     img {
-    height: 13px;
-    width: 13px;
+    height: 19px;
+    width: 19px;
   }
   .menu{
     font-size: 12px;
   }
   .account h4{
-    font-size: 14px;
+    font-size: 16px;
   }
 
   }
@@ -136,6 +136,17 @@ const MenuContainer = styled.div `
   flex-direction: column;
   justify-content: space-between;
   padding: 50px 20px;
+
+  .navlink {
+    text-decoration: none;
+    color: inherit; 
+  }
+
+  .active {
+    text-decoration: underline;
+    color: inherit; 
+  }
+
 
 `
 const Header = () => {
@@ -219,10 +230,12 @@ const Header = () => {
           </NavLink>
           </div>
 
+        <NavLink to='login' className='navlink'>
         <div className="account">
-          <img src={avatar} alt="avatar" />
+         <img src={avatar} alt="avatar" />
           <h4>Account</h4>
         </div>
+        </NavLink>
         </MenuContainer>
       </HAMBURGER>
 

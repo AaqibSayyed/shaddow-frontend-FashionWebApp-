@@ -12,6 +12,9 @@ const Footer = lazy(()=> import ('./component/layout/Footer.js'))
 const Home = lazy(()=> import ('./component/Home/Home.js'))
 const ProductDetail = lazy(()=> import ('./component/product/ProductDetail.js'))
 const Products = lazy(()=> import ('./component/product/Products.js'))
+const Login = lazy (()=> import('./component/user/Login.js'))
+const Register = lazy (()=> import('./component/user/Register.js'))
+const ForgetPassword = lazy (()=> import('./component/user/ForgetPassword.js'))
 
 function Router() {
   const [showNavbar, setShowNavbar] = useState(true) 
@@ -26,7 +29,12 @@ function Router() {
     <Routes>
     <Route path='/' element={<Home setShowNavbar={setShowNavbar} showNavbar={showNavbar}/>} exact={true} />
     <Route path='/product/:slug' element={<ProductDetail />}/>
-    <Route path='/products/:category?' element={<Products />} exact/>
+    <Route path='/products/:category?' element={<Products />}/>
+    <Route path='/login' element={<Login />}/>
+    <Route path='/register' element={<Register />}/>
+    <Route path='/forgetPassword' element={<ForgetPassword />}/>
+
+
   
     </Routes>
     <Footer />
