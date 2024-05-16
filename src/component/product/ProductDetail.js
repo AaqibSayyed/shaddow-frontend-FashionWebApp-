@@ -11,9 +11,12 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import MetaData from "../../MetaData";
 import ReviewCard from "./ReviewCard";
+import { BRAND_NAME } from "../../constant";
 
 const HomeLink = styled.div`
-  margin: 10px;
+  padding-left: 30px;
+  padding-top: 20px;
+
   .link {
     text-decoration: none;
     color: inherit;
@@ -70,11 +73,14 @@ const ProductImage = styled.div`
     display: none;
   }
 
+  .thumbnails-swipe-vertical {
+  all: unset;
+}
 
-  .image-gallery-image {
+  .image-gallery-slide .image-gallery-image {
     /* border: 2px solid black; */
-    width: 90%;
-    min-height: 450px;
+    width: 100%;
+    min-height: 500px;
     object-fit: cover;
     border-radius: 10px;
   }
@@ -87,17 +93,21 @@ const ProductImage = styled.div`
     .leftthumbnail {
       display: none;
     }
-    .image-gallery-image {
+    .image-gallery-slide .image-gallery-image {
       width: 70%;
       min-height: 650px;
+      object-fit: cover;
+
     }
   }
 
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
     min-height: 300px;
-    .image-gallery-image {
+    .image-gallery-slide .image-gallery-image {
       width: 85%;
       min-height: 300px;
+      object-fit: cover;
+
     }
   }
 `;
@@ -251,7 +261,7 @@ const ProductDetail = () => {
     // </>
 
     <>
-      <MetaData title={`SHADDOW - ${productDetail.name}`} />
+      <MetaData title={`${BRAND_NAME} - ${productDetail.name}`} />
       <HomeLink>
         <Link to="/" className="link">
           HOME
@@ -268,6 +278,8 @@ const ProductDetail = () => {
               showFullscreenButton={false}
               showPlayButton={false}
               showNav={false}
+              disableThumbnailSwipe={true}
+              disableThumbnailScroll={true}
             />
           </div>
 
@@ -278,13 +290,16 @@ const ProductDetail = () => {
               showFullscreenButton={false}
               showPlayButton={false}
               showNav={false}
+              disableThumbnailSwipe={true}  
+              disableThumbnailScroll={true}
+
             />
           </div>
         </ProductImage>
 
         <ProductDescription>
           <Wrapper>
-            <i>SHADDOW CLOTHING</i>
+            <i>SHADOW CLOTHING</i>
             <ProductName>{productDetail.name}</ProductName>
             <Description>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ut

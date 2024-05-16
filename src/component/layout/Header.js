@@ -4,7 +4,7 @@ import gsap from "gsap";
 import styled from "styled-components";
 import closeIcon from "../../assests/close.png";
 import avatar from "../../assests/avatar.png";
-import { NavLink } from "react-router-dom";
+import { NavLink,useLocation } from "react-router-dom";
 
 const Wrapper = styled.header`
   /* border: 2px solid black; */
@@ -53,14 +53,11 @@ const HAMBURGER = styled.div`
   border: 2px solid black;
   position: fixed;
   height: 100vh;
-  width: 70vw;
+  width: 60vw;
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 2;
   backdrop-filter: blur(2px);
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  padding: 35px 20px;
+  overflow: auto;
   transition: all 0.5s ease;
   transform: translateX(-100%);
 
@@ -78,7 +75,7 @@ const HAMBURGER = styled.div`
     &:hover {
       background-color: ${({ theme }) => theme.colors.secondary};
       color: ${({ theme }) => theme.colors.primary};
-      border-radius: 5px;
+      /* border-radius: 5px; */
       overflow: hidden;
     }
   }
@@ -86,12 +83,7 @@ const HAMBURGER = styled.div`
   .account {
     /* border:2px solid olive; */
     display: flex;
-    position: fixed;
-    width: calc(100% - 50px);
-    bottom: 0;
-    left: 0;
     padding: 10px 0;
-    margin: 0 25px;
     gap: 15px;
     border-top: 0.1px solid black;
   }
@@ -103,8 +95,9 @@ const HAMBURGER = styled.div`
 
   .active {
     text-decoration: underline;
-    color: black; 
+    color: inherit; 
   }
+
 
 
   @media (max-width: ${({theme}) => theme.media.tab}) {
@@ -134,7 +127,19 @@ const HAMBURGER = styled.div`
 
 
 `;
+
+const MenuContainer = styled.div `
+
+  display: flex;
+  height: 100%;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 50px 20px;
+
+`
 const Header = () => {
+
   const newPolicy = [
     "Prepaid Shipping Within 48 Hours!",
     "End Of Season Sale Now Live - Upto 50% OFF",
@@ -142,6 +147,7 @@ const Header = () => {
   ];
 
   const container = useRef();
+  const hamburgerOpen = useRef(null)
 
   const [newPolicyslide, setNewPolicyslide] = useState(0);
 
@@ -182,8 +188,8 @@ const Header = () => {
   }, [newPolicyslide]);
 
   const closeMenu = useCallback(() => {
-    let close_menu = document.querySelector(".hamburgerOpen");
-    close_menu.style.transform = "translateX(-100%)";
+    // let close_menu = document.querySelector(".hamburgerOpen");
+    hamburgerOpen.current.style.transform = "translateX(-100%)";
   }, []);
 
 
@@ -191,16 +197,18 @@ const Header = () => {
 
   return (
     <>
-      <HAMBURGER className="hamburgerOpen">
-        <img src={closeIcon} alt="close menu" onClick={closeMenu} />
-
+      <HAMBURGER className="hamburgerOpen" ref={hamburgerOpen}>
+        <img src={closeIcon} alt="close menu" onClick={closeMenu} style={{position: 'absolute', top: '20px', right: '20px' }}/>
+        
+        <MenuContainer>
+          <div className='main-menu'>
         <NavLink to="/" className="navlink">
             <h4 className="menu">HOME</h4>
           </NavLink>
-          <NavLink to="/products" className="navlink">
+          <NavLink to="/products/men" className="navlink">
             <h4 className="menu">MEN</h4>
           </NavLink>
-          <NavLink to="/women" className="navlink">
+          <NavLink to="/products/women" className="navlink">
             <h4 className="menu">WOMEN</h4>
           </NavLink>
           <NavLink to="/about" className="navlink">
@@ -209,11 +217,13 @@ const Header = () => {
           <NavLink to="/touch" className="navlink">
             <h4 className="menu">GET IN TOUCH</h4>
           </NavLink>
+          </div>
 
         <div className="account">
           <img src={avatar} alt="avatar" />
           <h4>Account</h4>
         </div>
+        </MenuContainer>
       </HAMBURGER>
 
       <Wrapper ref={container}>

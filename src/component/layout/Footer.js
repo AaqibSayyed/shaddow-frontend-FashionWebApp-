@@ -53,7 +53,7 @@ const CONTAINER = styled.footer`
         }
     }
 
-    p{       
+    .para{       
         margin-top: 3px;
         padding: 6px 0;
         width: fit-content;
@@ -101,34 +101,40 @@ const CONTAINER = styled.footer`
 ` 
 
 function Footer() {
+
+    const handleFormSubmission = (event)=>{
+        event.preventDefault()
+    }
   return (
     <CONTAINER className="container">
         <div className="about-us">
             <h3>ABOUT US</h3>
-            <p>Overlays Clothing Pvt Ltd</p>
-            <p>Explore to CHANGE.</p>
+            <p className='para'>Overlays Clothing Pvt Ltd</p>
+            <p className='para'>Explore to CHANGE.</p>
         </div>
 
         <div className='policies'>
             <h3>POLICIES</h3>
-            <p>Return Your Order</p>
-            <p>Shipping Policy</p>
-            <p>Return, Refund, and Cancellation</p>
-            <p>Terms and Conditions</p>
-            <p>Privacy Policy</p>
-            <p>Fraud Protection</p>
+            <p className='para'>Return Your Order</p>
+            <p className='para'>Shipping Policy</p>
+            <p className='para'>Return, Refund, and Cancellation</p>
+            <p className='para'>Terms and Conditions</p>
+            <p className='para'>Privacy Policy</p>
+            <p className='para'>Fraud Protection</p>
         </div>
 
         <div className="newsletter">
             <h3>NEWSLETTER</h3>
-            <p>You can be the first one to know about our new releases, latest offers and more.</p>
-            <input type='text' placeholder='Your Email' /> 
-            <button>Register</button>
+            <p style={{marginTop: '3px', padding: '6px 0', width: 'fit-content'}}>You can be the first one to know about our new releases, latest offers and more.</p>
+            <form onSubmit={handleFormSubmission}>
+            <input type='text' placeholder='Your Email' />
+            <button type='submit'>Register</button>
+            </form> 
         </div>
 
         <div className='follow-us'>
             <h3>FOLLOW US</h3>
-            <p>Stay in touch!</p>
+            <p style={{marginTop: '3px', padding: '6px 0', width: 'fit-content'}}>Stay in touch!</p>
             <div className="social-media">
                 <img src={instagram} alt='instagram'/>
                 <img src={facebook} alt='facebook'/>

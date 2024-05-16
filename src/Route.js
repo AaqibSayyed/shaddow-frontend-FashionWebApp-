@@ -26,7 +26,8 @@ function Router() {
     <Routes>
     <Route path='/' element={<Home setShowNavbar={setShowNavbar} showNavbar={showNavbar}/>} exact={true} />
     <Route path='/product/:slug' element={<ProductDetail />}/>
-    <Route path='/products/men' element={<Products />}/>
+    <Route path='/products/:category?' element={<Products />} exact/>
+  
     </Routes>
     <Footer />
     </BrowserRouter>

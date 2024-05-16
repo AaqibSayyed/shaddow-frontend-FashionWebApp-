@@ -1,11 +1,14 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 import searchIcon from "../../assests/search.png";
 import mailIcon from "../../assests/mail.png";
 import shoppingCart from "../../assests/shopping-cart.png";
 import avatar from "../../assests/avatar.png";
 import menuBurger from "../../assests/menu-burger.png";
-import { NavLink } from "react-router-dom";
+import { NavLink,useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateSearchKeyword } from "../../redux/slices/productSlice/getProducts/getProductsSlice";
 
 const CONTAINER = styled.nav`
   /* border: 2px solid black; */
@@ -24,10 +27,20 @@ const CONTAINER = styled.nav`
         !showNavbar && theme.colors.secondary};
     }
 
+    .navlink {
+      text-decoration: none;
+      color: ${({ theme }) => theme.colors.secondary};
+    }
+    .active {
+      text-decoration: underline;
+      color: ${({ theme }) => theme.colors.secondary};
+     }
+
+
     .container .logo {
       &::before {
-        content: ${({ showNavbar }) => !showNavbar && "SHADDOW"};
-        /* content: 'SHADDOW'; */
+        content: ${({ showNavbar }) => !showNavbar && "SHADOW"};
+        /* content: 'SHADOW'; */
         position: absolute;
         z-index: -1;
         color: ${({ theme, showNavbar }) =>
@@ -106,15 +119,19 @@ const CONTAINER = styled.nav`
     .navbarLine {
       display: block;
     }
+  }
 
-    @media (max-width: ${({ theme }) => theme.media.mobile}) {
-      .wrapper {
-        /* border: 2px solid blue; */
-        padding: 12px 10px;
-      }
+  @media (max-width: ${({ theme }) => theme.media.mobile}) {
+    &:hover {
+      background-color: none;
+    }
+    .wrapper {
+      /* border: 2px solid blue; */
+      padding: 12px 10px;
+    }
 
-      .wrapper .search {
-        margin-top: 1px;
+    .wrapper .search {
+      margin-top: 1px;
         .searchIcon {
           height: 20px;
           min-width: 20px;
@@ -128,38 +145,38 @@ const CONTAINER = styled.nav`
         .input-search input[type="text"] {
           font-size: 10px;
         }
-      }
+      /* display: none; */
+    }
 
-      .wrapper .container {
-        min-width: 20%;
-      }
-      .wrapper .container .logo {
-        font-size: 20px;
-      }
+    .wrapper .container {
+      min-width: 20%;
+    }
+    .wrapper .container .logo {
+      font-size: 20px;
+    }
 
-      .wrapper .container .hamburger {
-        height: 20px;
-        width: 20px;
-      }
+    .wrapper .container .hamburger {
+      height: 20px;
+      width: 20px;
+    }
 
-      .wrapper .icons {
-        /* border: 2px solid orange; */
-        min-width: 10%;
-      }
+    .wrapper .icons {
+      /* border: 2px solid orange; */
+      min-width: 10%;
+    }
 
-      .wrapper .icons :nth-child(1),
-      .wrapper .icons :nth-child(2) {
-        display: none;
-      }
+    .wrapper .icons :nth-child(1),
+    .wrapper .icons :nth-child(2) {
+      display: none;
+    }
 
-      .wrapper .icons :nth-child(3) {
-        height: 22px;
-        width: 22px;
-      }
+    .wrapper .icons :nth-child(3) {
+      height: 22px;
+      width: 22px;
+    }
 
-      .navbarLine {
-        display: block;
-      }
+    .navbarLine {
+      display: block;
     }
   }
 `;
@@ -201,13 +218,13 @@ const Wrapper = styled.div`
     }
     &::placeholder {
       color: ${({ theme, showNavbar }) =>
-        !showNavbar ? theme.colors.primary : theme.colors.secondary};
+        !showNavbar && theme.colors.secondary};
     }
   }
 
   .container {
     /* border: 2px solid orange; */
-    min-width: 30%;
+    min-width: fit-content;
     .logo {
       /* border: 2px solid orange; */
       position: relative;
@@ -217,10 +234,18 @@ const Wrapper = styled.div`
       text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
       color: ${({ theme }) => theme.colors.primary};
       transition: all 1s ease;
+      a {
+        text-decoration: none;
+        color: inherit;
+        .active {
+          text-decoration: underline;
+          color: inherit;
+        }
+      }
       &:hover {
         cursor: pointer;
         &::before {
-          content: "SHADDOW";
+          content: "SHADOW";
           position: absolute;
           z-index: -1;
           color: black;
@@ -281,36 +306,80 @@ const MENU = styled.div`
   }
   .navlink {
     text-decoration: none;
-    color: inherit; 
+    color: inherit;
   }
 
   .active {
     text-decoration: underline;
-    color: black; 
+    color: inherit;
   }
+
+
 `;
 
 function Navbar(props) {
-  let searchFocus = useRef();
 
-  const focus = useCallback(() => {
-    searchFocus.current.focus();
-  }, []);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  let searchFocus = useRef();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { productCategory } = useSelector((state) => state.product);
 
   const openMenu = useCallback(() => {
     let open_menu = document.querySelector(".hamburgerOpen");
     open_menu.style.transform = "translateX(0%)";
   }, []);
 
+  const getValue = (event) => {
+    if (!event.target.value) {
+       dispatch(updateSearchKeyword(""));
+    }
+     setSearchKeyword(event.target.value);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      if (searchKeyword) {
+         dispatch(updateSearchKeyword(searchKeyword.trim()));
+      }
+      if (!productCategory && searchKeyword) {
+          navigate(`/products`);
+      }
+
+      if (productCategory && searchKeyword) {
+         navigate(`/products/${productCategory}`);
+      }
+    }
+  };
+
+  const searchIconClicked = () => {
+    if (!searchKeyword) {
+      searchFocus.current.focus();
+    }
+    if (searchKeyword) {
+      dispatch(updateSearchKeyword(searchKeyword.trim()));
+    }
+    if (!productCategory && searchKeyword) {
+      navigate(`/products`);
+    }
+    if (productCategory && searchKeyword) {
+      navigate(`/products/${productCategory}`);
+    }
+  };
+
+  const focusInputSearch = () => {
+    searchFocus.current.focus();
+  };
+
   return (
     <>
-      <CONTAINER showNavbar={props.showNavbar}>
+      <CONTAINER showNavbar={props.showNavbar} onClick={focusInputSearch}>
         <Wrapper className="wrapper" showNavbar={props.showNavbar}>
           <div className="search">
             <img
               src={searchIcon}
               alt="Search Icon"
-              onClick={focus}
+              onClick={searchIconClicked}
               className="searchIcon"
             />
             <div className="input-search">
@@ -318,6 +387,8 @@ function Navbar(props) {
                 type="text"
                 placeholder="What are you looking for?"
                 ref={searchFocus}
+                onChange={getValue}
+                onKeyDown={handleKeyPress}
               />
             </div>
           </div>
@@ -329,7 +400,9 @@ function Navbar(props) {
               alt="hamburger-menu"
               onClick={openMenu}
             />
-            <h1 className="logo">SHADDOW</h1>
+            <h1 className="logo">
+              <NavLink to="/">SHADOW</NavLink>
+            </h1>
           </div>
 
           <div className="icons">
@@ -344,10 +417,10 @@ function Navbar(props) {
           <NavLink to="/" className="navlink">
             <h4 className="menu">HOME</h4>
           </NavLink>
-          <NavLink to="/products" className="navlink">
+          <NavLink to="/products/men" className="navlink">
             <h4 className="menu">MEN</h4>
           </NavLink>
-          <NavLink to="/women" className="navlink">
+          <NavLink to="/products/women" className="navlink">
             <h4 className="menu">WOMEN</h4>
           </NavLink>
           <NavLink to="/about" className="navlink">
