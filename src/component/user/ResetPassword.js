@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import {useState,useEffect} from 'react'
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import { useDispatch, useSelector } from "react-redux";
-import { userPasswordForget } from "../../redux/slices/userSlice/userThunk";
-import Loader from '../Loader';
+import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import { NavLink } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
+import { userPasswordReset } from '../../redux/slices/userSlice/userThunk';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
 import { clearError } from "../../redux/slices/userSlice/userSlice";
 
-const ForgetPasswordForm = styled.div`
+
+const ResetPasswordContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
@@ -126,60 +127,96 @@ const ForgetPasswordForm = styled.div`
     }
   }
 `;
-   
 
-function ForgetPassword() {
-
-    const [forgetPasswordEmail, SetForgetPasswordEmail] = useState('')  
+function ResetPassword() {
+    const { resetToken } = useParams();
     const dispatch = useDispatch()
-    const { isLoading, isErrorForgotPassword, passwordForgotMessage, errorMessage} = useSelector((state)=> state.user)
+    const {isErrorResetPassword, passwordResetMessage, errorMessage} = useSelector((state)=> state.user)
+    const navigate = useNavigate();
 
-    console.log('passwordForgotMessage', passwordForgotMessage)
+    const [password, setPassword] = useState({
+        newPassword: '',
+        confirmPassword: '',
+    })  
 
-    const forgetPasswordFormHandle = (event)=>{
-        event.preventDefault();
-        dispatch(userPasswordForget(forgetPasswordEmail))
+    const data = {
+        password : password.newPassword,
+        confirmPassword : password.confirmPassword,
+        resetToken 
+    }
+
+    const resetPasswordFormHandle = (event)=>{
+        event.preventDefault()
+        dispatch(userPasswordReset(data))
+    }
+
+    const getValues = (event)=>{
+        setPassword({
+            ...password, [event.target.name] : event.target.value
+        })
+
     }
 
     useEffect(()=>{
-      if(isErrorForgotPassword){
-        toast.error(errorMessage)
-      }
-    },[isErrorForgotPassword])
+        if(isErrorResetPassword){
+            toast.error(errorMessage)
+        }
+
+    },[isErrorResetPassword])
 
     useEffect(()=>{
-      if(!isErrorForgotPassword && passwordForgotMessage){
-        toast.success(passwordForgotMessage)
-        SetForgetPasswordEmail('')
-      }
-    },[isErrorForgotPassword, passwordForgotMessage])
+        if(!isErrorResetPassword && passwordResetMessage){
+            toast.success(passwordResetMessage)
+            setPassword({
+                newPassword: '',
+                confirmPassword: ''
+            })  
+
+            navigate('/login')
+        }
+
+    },[isErrorResetPassword, passwordResetMessage])
 
     useEffect(()=>{
-      return ()=>{
-        dispatch(clearError())
-      }
-    },[])
+        return ()=>{
+          dispatch(clearError())
+        }
+      },[])
 
   return (
-    
-    (isLoading)? <Loader/> : <ForgetPasswordForm> <div className="form-container">
-    <h3>Recover Password</h3>
-    <p>Please enter your e-mail:</p>
 
-    <form onSubmit={forgetPasswordFormHandle}>
+    <ResetPasswordContainer>
+    <div className="form-container">
+    <h3>Reset Password</h3>
+    <p>Please enter your New Password:</p>
+
+    <form onSubmit={resetPasswordFormHandle}>
     <div className="input-types">
         <input
-          type="email"
-          placeholder="E-mail"
-          name="email"
-          value={forgetPasswordEmail}
+          type="password"
+          placeholder="New Password"
+          name="newPassword"
+          value={password.newPassword}
           required
-          onChange={(e)=>{SetForgetPasswordEmail(e.target.value)}}
+          onChange={getValues}
         />
-        <EmailOutlinedIcon className="input-icons" />
+        <LockOpenOutlinedIcon className="input-icons" />
       </div>
 
-    <button type="submit">RECOVER</button>
+      <div className="input-types">
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          name="confirmPassword"
+          value={password.confirmPassword}
+          required
+          onChange={getValues}
+        />
+        <LockOpenOutlinedIcon className="input-icons" />
+      </div>
+
+
+    <button type="submit">Submit</button>
     </form>
 
     <p>
@@ -191,9 +228,9 @@ function ForgetPassword() {
     </p>
 
     </div>
+    </ResetPasswordContainer>
 
-</ForgetPasswordForm>
   )
 }
 
-export default ForgetPassword
+export default ResetPassword

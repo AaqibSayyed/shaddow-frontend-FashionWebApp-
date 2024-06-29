@@ -4,18 +4,21 @@ import profilePng from "../../assests/Profile.png";
 import Stars from "../ratingStar/Stars";
 
 const Reviews = styled.div`
+
   margin: 20px 0px;
   margin-top: 27px;
   .review {
     width: fit-content;
     margin: 0 auto;
-    /* border-bottom: 0.5px solid black; */
+    /* border-bottom: 0.5px solid blue; */
     font-size: 20px;
     font-weight: 900;
+    font-style: italic;
+    border-bottom: 1px solid black;
   }
 `;
 const CustomerReviews = styled.div`
-  /* border: 2px solid black; */
+  /* border: 2px solid red; */
   display: flex;
   /* flex-direction: column; */
   padding: 20px 25px;
@@ -74,15 +77,17 @@ const CustomerReviews = styled.div`
     width: 0;
     height: 0;
   }
-    * {
+  }
+
+      
+  * {
       font-size: 15px;
     }
 
-    .container {
+  .container {
       /* border: 2px solid blue; */
       min-width: 40%;
     }
-  }
 }
 
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
@@ -95,7 +100,6 @@ const CustomerReviews = styled.div`
       min-width: 80%;
     }
   }
-
 
 `;
 

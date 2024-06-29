@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import { userRegister } from "../../redux/slices/userSlice/userThunk";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+import { clearError } from "../../redux/slices/userSlice/userSlice";
+
 
 const RegisterForm = styled.div`
   width: 100%;
@@ -128,6 +134,10 @@ const RegisterForm = styled.div`
 
 
 function Register() {
+  const dispatch = useDispatch()
+  const {isErrorRegister, errorMessage, isAuthenticated} = useSelector((state)=> state.user)
+  const navigate = useNavigate();
+  
   const [registerFormValues, setregisterFormValues] = useState({
     name: "",
     email: "",
@@ -143,11 +153,25 @@ function Register() {
 
   const registerFormHandle = (event) => {
     event.preventDefault();
-    console.log(registerFormValues.name);
-    console.log(registerFormValues.email);
-    console.log(registerFormValues.password);
+    dispatch((userRegister(registerFormValues)))
 
   };
+
+  useEffect(()=>{
+    if(isErrorRegister){
+      toast.error(errorMessage);
+    }
+    return ()=>{
+      dispatch(clearError())
+  }
+  },[isErrorRegister])
+  
+  useEffect(()=>{
+    if(isAuthenticated){
+      navigate('/')
+    }
+  },[isAuthenticated, navigate])
+
 
   return (
     <RegisterForm>

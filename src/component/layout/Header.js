@@ -4,7 +4,15 @@ import gsap from "gsap";
 import styled from "styled-components";
 import closeIcon from "../../assests/close.png";
 import avatar from "../../assests/avatar.png";
-import { NavLink,useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import Backdrop from "@material-ui/core/Backdrop";
+import { SpeedDial, SpeedDialAction } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { userLogout } from "../../redux/slices/userSlice/userThunk";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const Wrapper = styled.header`
   /* border: 2px solid black; */
@@ -98,12 +106,33 @@ const HAMBURGER = styled.div`
     color: inherit; 
   }
 
+  .css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab {
+    
+    height: auto;
+    width: fit-content;
+    padding: 5px;
+    background: transparent;
+    border-radius: 5px;
+    color: black;
+    border: none;
+    box-shadow: unset;
+    text-transform: unset;
+    &:hover {
+      background: unset;
+    }
+  }
+  .css-vudeem-MuiSpeedDial-root{
+    -webkit-flex-direction: unset;
+    text-transform: unset;
+
+  }
 
 
   @media (max-width: ${({theme}) => theme.media.tab}) {
     img {
     height: 17px;
     width: 17px;
+    margin-bottom: 0;
   }
   .menu{
     font-size: 15px;
@@ -113,12 +142,13 @@ const HAMBURGER = styled.div`
 
   @media (max-width: ${({theme}) => theme.media.mobile}) {
     img {
-    height: 19px;
-    width: 19px;
+    height: 22px;
+    width: 22px;
   }
   .menu{
     font-size: 12px;
   }
+
   .account h4{
     font-size: 16px;
   }
@@ -161,7 +191,10 @@ const Header = () => {
   const hamburgerOpen = useRef(null)
 
   const [newPolicyslide, setNewPolicyslide] = useState(0);
-
+  const {user, isAuthenticated, userLoagOut, userLogOutMessage} = useSelector((state)=> state.user)
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const previousPolicy = useCallback(() => {
     setNewPolicyslide((prevSlide) =>
       prevSlide === 0 ? newPolicy.length - 1 : prevSlide - 1
@@ -186,6 +219,14 @@ const Header = () => {
     { dependencies: [newPolicyslide], scope: container, revertOnUpdate: true }
   );
 
+
+  const logout = () => {
+    dispatch(userLogout());
+    setOpen(false)
+    toast.success("Logged Out Successfully");
+    navigate("/");
+  };
+
   useEffect(() => {
     let interval = setInterval(() => {
       setNewPolicyslide((prevSlide) =>
@@ -202,7 +243,6 @@ const Header = () => {
     // let close_menu = document.querySelector(".hamburgerOpen");
     hamburgerOpen.current.style.transform = "translateX(-100%)";
   }, []);
-
 
 
 
@@ -230,12 +270,61 @@ const Header = () => {
           </NavLink>
           </div>
 
+
+
+          {isAuthenticated? <div className="account">
+            {/* <h4>{user.name}</h4> */}
+            <div
+                className="user-login-info"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: '7px'
+                }}
+              >
+            <Backdrop open={open} style={{ zIndex: "10", height: '100vh' }} />
+                <SpeedDial
+                  ariaLabel="User SpeedDial"
+                  onClose={() => setOpen(false)}
+                  onOpen={() => setOpen(true)}
+                  open={open}
+                  direction="up"
+                  style={{ zIndex: "11" }}
+                  icon={
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img src={avatar} alt="avatar" />
+                      <p style={{fontStyle: 'italic'}}>Hello, {user.name}  <span>&#9660;</span></p>
+                     
+                    </div>
+                  }
+                  sx={{position:'relative',  alignItems: "center", justifyContent: "center"}}
+                >
+                  <SpeedDialAction
+                    icon={<LogoutIcon />}
+                    tooltipTitle="Logout"
+                    onClick={logout}
+                    sx={{position:'absolute', right:-40, top: 20}}
+                  />
+                </SpeedDial>
+                </div>
+            
+            </div> 
+            
+            
+            : 
+
+
         <NavLink to='login' className='navlink'>
         <div className="account">
          <img src={avatar} alt="avatar" />
           <h4>Account</h4>
         </div>
         </NavLink>
+        }
         </MenuContainer>
       </HAMBURGER>
 

@@ -7,7 +7,7 @@ const getProductDetail = createAsyncThunk('productDetail', async (url,  { reject
         return response.data.data;
     } catch (error) {
         if(error.response.status === 500){
-            return rejectWithValue('Internal Server Error')
+            return rejectWithValue((error?.response?.data)? error.response.data: 'Internal Server Error')
         }
         return rejectWithValue(error.response.data);            
     }

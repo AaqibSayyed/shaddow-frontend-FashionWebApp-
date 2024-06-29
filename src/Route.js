@@ -15,6 +15,8 @@ const Products = lazy(()=> import ('./component/product/Products.js'))
 const Login = lazy (()=> import('./component/user/Login.js'))
 const Register = lazy (()=> import('./component/user/Register.js'))
 const ForgetPassword = lazy (()=> import('./component/user/ForgetPassword.js'))
+const ResetPassword = lazy (()=> import('./component/user/ResetPassword.js'))
+
 
 function Router() {
   const [showNavbar, setShowNavbar] = useState(true) 
@@ -27,15 +29,15 @@ function Router() {
     <Header/>
     {showNavbar && <Navbar showNavbar={showNavbar}/>}
     <Routes>
+
     <Route path='/' element={<Home setShowNavbar={setShowNavbar} showNavbar={showNavbar}/>} exact={true} />
     <Route path='/product/:slug' element={<ProductDetail />}/>
     <Route path='/products/:category?' element={<Products />}/>
     <Route path='/login' element={<Login />}/>
     <Route path='/register' element={<Register />}/>
-    <Route path='/forgetPassword' element={<ForgetPassword />}/>
+    <Route path='/forgetpassword' element={<ForgetPassword />}/>
+    <Route path='/forgetpassword/reset/:resetToken?' element={<ResetPassword />}/>
 
-
-  
     </Routes>
     <Footer />
     </BrowserRouter>

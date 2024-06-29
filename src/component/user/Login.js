@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import { NavLink } from "react-router-dom";
+import { userLogin } from "../../redux/slices/userSlice/userThunk";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { clearError } from "../../redux/slices/userSlice/userSlice";
+
 
 const LoginForm = styled.div`
   width: 100%;
@@ -137,6 +143,13 @@ const LoginForm = styled.div`
 `;
 
 function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isErrorLogin, errorMessage, isAuthenticated,userCurrentLocation, user } = useSelector(
+    (state) => state.user
+  );
+
   const [loginFormValues, setLoginFormValues] = useState({
     email: "",
     password: "",
@@ -147,15 +160,29 @@ function Login() {
       ...loginFormValues,
       [event.target.name]: event.target.value,
     });
-    
   };
-  
-  const loginFormHandle = (event)=>{
-    event.preventDefault()
-    console.log("loginFormValues.email", loginFormValues.email);
-    console.log("loginFormValues.password", loginFormValues.password);
+
+  const loginFormHandle = (event) => {
+    event.preventDefault();
+    dispatch(userLogin(loginFormValues));
+  };
+
+  useEffect(() => {
+    if (isErrorLogin) {
+      toast.error(errorMessage);
+    }
+    return ()=>{
+      dispatch(clearError())
   }
-  
+  }, [isErrorLogin]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate((userCurrentLocation)? userCurrentLocation : '/');
+      toast.success(`Welcome, ${user.name}`)
+    }
+  }, [isAuthenticated, navigate]);
+
 
   return (
     <LoginForm>
@@ -175,18 +202,18 @@ function Login() {
             <EmailOutlinedIcon className="input-icons" />
           </div>
 
-            <div className="input-types">
-                <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={loginFormValues.password}
-                required
-                onChange={getLoginFormValues}
-                />
-                <LockOpenOutlinedIcon className="input-icons" />
+          <div className="input-types">
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={loginFormValues.password}
+              required
+              onChange={getLoginFormValues}
+            />
+            <LockOpenOutlinedIcon className="input-icons" />
             <div className="forget-password">
-              <NavLink to="/forgetPassword" className="NavLink">
+              <NavLink to="/forgetpassword" className="NavLink">
                 Forget Password?
               </NavLink>
             </div>

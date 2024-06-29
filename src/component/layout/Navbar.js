@@ -1,14 +1,19 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import searchIcon from "../../assests/search.png";
-import mailIcon from "../../assests/mail.png";
 import shoppingCart from "../../assests/shopping-cart.png";
 import avatar from "../../assests/avatar.png";
 import menuBurger from "../../assests/menu-burger.png";
-import { NavLink,useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateSearchKeyword } from "../../redux/slices/productSlice/getProducts/getProductsSlice";
+import { SpeedDial, SpeedDialAction } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { userLogout } from "../../redux/slices/userSlice/userThunk";
+import { toast } from "react-toastify";
+import Backdrop from "@material-ui/core/Backdrop";
+import { updateUserLocation } from "../../redux/slices/userSlice/userSlice";
 
 const CONTAINER = styled.nav`
   /* border: 2px solid black; */
@@ -34,8 +39,7 @@ const CONTAINER = styled.nav`
     .active {
       text-decoration: underline;
       color: ${({ theme }) => theme.colors.secondary};
-     }
-
+    }
 
     .container .logo {
       &::before {
@@ -56,6 +60,23 @@ const CONTAINER = styled.nav`
           !showNavbar && theme.colors.secondary};
       }
     }
+  }
+  .css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab {
+    height: auto;
+    width: fit-content;
+    padding: 5px;
+    background: transparent;
+    border-radius: 5px;
+    color: black;
+    border: none;
+    box-shadow: unset;
+    text-transform: unset;
+    &:hover {
+      background: unset;
+    }
+  }
+  .css-vudeem-MuiSpeedDial-root{
+    -webkit-flex-direction: unset;
   }
 
   @media (max-width: ${({ theme }) => theme.media.tab}) {
@@ -85,8 +106,8 @@ const CONTAINER = styled.nav`
       /* border: 2px solid red; */
       min-width: 50%;
       img {
-        height: 25px;
-        width: 25px;
+        height: 20px;
+        width: 20px;
       }
     }
 
@@ -119,6 +140,10 @@ const CONTAINER = styled.nav`
     .navbarLine {
       display: block;
     }
+
+    .css-7dv1rb-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab {
+      font-size: 12px;
+    }
   }
 
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
@@ -132,19 +157,19 @@ const CONTAINER = styled.nav`
 
     .wrapper .search {
       margin-top: 1px;
-        .searchIcon {
-          height: 20px;
-          min-width: 20px;
-          &:hover {
-            + .input-search input[type="text"] {
-              display: block;
-              font-size: 10px;
-            }
+      .searchIcon {
+        height: 20px;
+        min-width: 20px;
+        &:hover {
+          + .input-search input[type="text"] {
+            display: block;
+            font-size: 10px;
           }
         }
-        .input-search input[type="text"] {
-          font-size: 10px;
-        }
+      }
+      .input-search input[type="text"] {
+        font-size: 10px;
+      }
       /* display: none; */
     }
 
@@ -166,11 +191,18 @@ const CONTAINER = styled.nav`
     }
 
     .wrapper .icons :nth-child(1),
-    .wrapper .icons :nth-child(2) {
+    .wrapper .icons :nth-child(2),
+    .user-login-info,
+    .avtar-login {
       display: none;
     }
 
     .wrapper .icons :nth-child(3) {
+      display: none;
+    }
+
+    .wrapper .icons .shooping-cart-small-devices {
+      display: block;
       height: 22px;
       width: 22px;
     }
@@ -212,7 +244,7 @@ const Wrapper = styled.div`
     min-width: 100%;
     border: none;
     background: transparent;
-    font-size: 100%;
+    font-size: 90%;
     &:focus {
       outline: none;
     }
@@ -272,14 +304,18 @@ const Wrapper = styled.div`
     gap: 10px;
   }
   .icons img {
-    height: 30px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     color: white;
     transition: all 0.5s ease;
     &:hover {
       cursor: pointer;
       transform: scale(1.1);
     }
+  }
+
+  .icons .shooping-cart-small-devices {
+    display: none;
   }
 `;
 const HR = styled.hr`
@@ -313,17 +349,27 @@ const MENU = styled.div`
     text-decoration: underline;
     color: inherit;
   }
-
-
 `;
 
 function Navbar(props) {
-
   const [searchKeyword, setSearchKeyword] = useState("");
   let searchFocus = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation()
+  
   const { productCategory } = useSelector((state) => state.product);
+  const {
+    user,
+    isAuthenticated,
+    isErrorLogout,
+    errorMessage,
+    userLoagOut,
+    userLogOutMessage,
+    userCurrentLocation
+  } = useSelector((state) => state.user);
+
+  const [open, setOpen] = useState(false);
 
   const openMenu = useCallback(() => {
     let open_menu = document.querySelector(".hamburgerOpen");
@@ -332,22 +378,22 @@ function Navbar(props) {
 
   const getValue = (event) => {
     if (!event.target.value) {
-       dispatch(updateSearchKeyword(""));
+      dispatch(updateSearchKeyword(""));
     }
-     setSearchKeyword(event.target.value);
+    setSearchKeyword(event.target.value);
   };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       if (searchKeyword) {
-         dispatch(updateSearchKeyword(searchKeyword.trim()));
+        dispatch(updateSearchKeyword(searchKeyword.trim()));
       }
       if (!productCategory && searchKeyword) {
-          navigate(`/products`);
+        navigate(`/products`);
       }
 
       if (productCategory && searchKeyword) {
-         navigate(`/products/${productCategory}`);
+        navigate(`/products/${productCategory}`);
       }
     }
   };
@@ -367,7 +413,24 @@ function Navbar(props) {
     }
   };
 
+  const logout = () => {
+    dispatch(userLogout());
+      toast.success('Logged Out Successfully');
+      navigate("/");
+  };
 
+  useEffect(() => {
+    if (isErrorLogout) {
+      toast.error(errorMessage);
+    }
+  }, [isErrorLogout]);
+
+  useEffect(() => {
+    dispatch(updateUserLocation(location.pathname))
+  }, [location.pathname, dispatch]);
+
+
+  
   return (
     <>
       <CONTAINER showNavbar={props.showNavbar}>
@@ -403,9 +466,62 @@ function Navbar(props) {
           </div>
 
           <div className="icons">
-            <img src={mailIcon} alt="Search Icon" id="mailIcon" />
-            <NavLink to='login'><img src={avatar} alt="Search Icon" id="avatar" /></NavLink>
-            <img src={shoppingCart} alt="Search Icon" id="shoppingCart" />
+            {isAuthenticated ? (
+              <div
+                className="user-login-info"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: '7px'
+                }}
+              >
+                <Backdrop open={open} style={{ zIndex: "10", height: '100vh' }} />
+                <SpeedDial
+                  ariaLabel="User SpeedDial"
+                  onClose={() => setOpen(false)}
+                  onOpen={() => setOpen(true)}
+                  open={open}
+                  direction="down"
+                  style={{ zIndex: "11" }}
+                  icon={
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "3px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <p style={{fontStyle: 'italic'}}>Hello, {user.name}</p>
+                      <p>&#9660;</p>
+                    </div>
+                  }
+                  sx={{position:'relative',  alignItems: "center", justifyContent: "center"}}
+                >
+                  <SpeedDialAction
+                    icon={<LogoutIcon />}
+                    tooltipTitle="Logout"
+                    onClick={logout}
+                    sx={{position:'absolute', right:0, top: 20}}
+                  />
+                </SpeedDial>
+                <img src={shoppingCart} alt="Search Icon" id="shoppingCart" />
+              </div>
+            ) : (
+              <div
+                className="avtar-login"
+                style={{ display: "flex", gap: "7px" }}
+              >
+                <NavLink to="login">
+                  <img src={avatar} alt="Search Icon" id="avatar" />
+                </NavLink>
+                <img src={shoppingCart} alt="Search Icon" id="shoppingCart" />
+              </div>
+            )}
+
+            <img
+              src={shoppingCart}
+              alt="Search Icon"
+              id="shoppingCart"
+              className="shooping-cart-small-devices"
+            />
           </div>
         </Wrapper>
         <HR />
